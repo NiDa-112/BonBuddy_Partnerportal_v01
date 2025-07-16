@@ -1,1 +1,281 @@
-<h1>Das ist ein Test</h1>
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <title>BonBuddy Login</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #ffffff;
+        height: 100vh;
+        overflow: hidden;
+        position: relative;
+        font-family: 'Jost', sans-serif;
+      }
+
+      .dot {
+        position: absolute;
+        width: 12px;
+        height: 12px;
+        background-color: #519e8a;
+        border-radius: 50%;
+        opacity: 0.15;
+        filter: blur(25px);
+        transition: transform 0.3s ease;
+        will-change: transform;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(0px, 0px);
+        }
+        50% {
+          transform: translate(20px, -20px);
+        }
+        100% {
+          transform: translate(0px, 0px);
+        }
+      }
+
+      .login-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 800px;
+        height: 400px;
+        border-radius: 20px;
+        box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+        background: #ffffff;
+        display: flex;
+      }
+
+      .login-left {
+        flex: 1;
+        background: #ffffff;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+      }
+
+      .login-left h3 {
+        margin-bottom: 20px;
+      }
+
+      .login-left input {
+        display: block;
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 16px;
+        border: none;
+        border-radius: 8px;
+        background: #ccc;
+        font-size: 16px;
+      }
+
+      .login-left button {
+        width: 100%;
+        padding: 12px;
+        background-color: #519e8a;
+        border: none;
+        color: white;
+        font-weight: bold;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      .login-left p {
+        margin-top: 20px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      .login-left p a {
+        text-decoration: underline;
+        color: #2a2a2a;
+      }
+
+      .google-btn {
+        margin-top: 10px;
+        background: #ffffff;
+        color: #333;
+        border: 1px solid #ccc;
+        font-weight: bold;
+      }
+
+      .google-btn:hover {
+        background: #f5f5f5;
+      }
+
+      .login-right {
+        flex: 1;
+        background: #519e8a;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 40px;
+      }
+    </style>
+
+    <!-- Firebase CDN (JS SDK) -->
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
+  </head>
+  <body>
+    <script>
+      // Punkte-Hintergrund generieren
+      const count = 10;
+      const rows = 2;
+      const cols = 5;
+      const spacingV = 100 / rows;
+      const spacingH = 100 / cols;
+
+      let index = 0;
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (index++ >= count) break;
+          const dot = document.createElement('div');
+          dot.className = 'dot';
+          dot.style.top = `${r * spacingV + Math.random() * (spacingV / 2)}vh`;
+          dot.style.left = `${c * spacingH + Math.random() * (spacingH / 2)}vw`;
+          dot.style.animation = `float ${(6 + Math.random() * 3)}s ease-in-out infinite`;
+          dot.style.opacity = (Math.random() * 0.3 + 0.2).toFixed(2);
+          dot.style.width = dot.style.height =
+            Math.random() * 100 + 150 + 'px';
+          document.body.appendChild(dot);
+        }
+      }
+    </script>
+
+    <div class="login-box">
+      <!-- Linke Seite (Formular) -->
+      <div class="login-left">
+        <h3>Hier anmelden:</h3>
+        <form id="login-form">
+          <input
+            type="email"
+            placeholder="E-Mail-Adresse"
+            name="email"
+            required
+          />
+          <div style="position: relative">
+            <input
+              type="password"
+              placeholder="Passwort"
+              name="password"
+              id="password-input"
+              required
+              style="padding-right: 40px;"
+            />
+            <button
+              type="button"
+              id="toggle-password"
+              style="
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                transform: translateY(-65%);
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-weight: bold;
+                width: 24px;
+                height: 24px;
+                color: #2a2a2a;
+                font-size: 14px;
+                padding: 4px;
+              "
+            >👀</button>
+          </div>
+          <button type="submit">Mit E-Mail anmelden</button>
+        </form>
+        <button id="google-login" class="google-btn">
+          Mit Google anmelden
+        </button>
+        <p><a href="#">Mitglied werden</a></p>
+      </div>
+
+      <!-- Rechte Seite (Begrüßung) -->
+      <div class="login-right">
+        <h2 style="margin-bottom: 20px;">Herzlich Willkommen</h2>
+        <a
+          href="#"
+          style="
+            color: white;
+            text-decoration: underline;
+            font-weight: bold;
+          "
+          >Jetzt Mitglied werden</a
+        >
+      </div>
+    </div>
+
+    <script>
+      // Firebase Konfiguration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDM8HZ83CzY7iafTkCuCEC3X9G8N2eW8y4",
+        authDomain: "bonbuddy-b2b.firebaseapp.com",
+        projectId: "bonbuddy-b2b",
+        storageBucket: "bonbuddy-b2b.firebasestorage.app",
+        messagingSenderId: "700370381819",
+        appId: "1:700370381819:web:5b9cbc1ed44246ada1f95e"
+      };
+
+      // Firebase initialisieren
+      firebase.initializeApp(firebaseConfig);
+      const auth = firebase.auth();
+
+      // Email/Password Login
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const email = this.email.value;
+          const password = this.password.value;
+
+          try {
+            await auth.signInWithEmailAndPassword(email, password);
+            // Erfolgreich eingeloggt
+            window.location.href = "dashboard_markt.html";
+          } catch (error) {
+            alert("Login fehlgeschlagen: " + error.message);
+          }
+        });
+
+      // Google Login
+      document
+        .getElementById("google-login")
+        .addEventListener("click", async function () {
+          const provider = new firebase.auth.GoogleAuthProvider();
+          try {
+            await auth.signInWithPopup(provider);
+            window.location.href = "dashboard.html";
+          } catch (error) {
+            alert("Google Login fehlgeschlagen: " + error.message);
+          }
+        });
+    document.getElementById('toggle-password').addEventListener('click', function () {
+      const input = document.getElementById('password-input');
+      if (input.type === 'password') {
+        input.type = 'text';
+        this.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        this.textContent = '👀';
+      }
+    });
+    </script>
+  </body>
+</html>
